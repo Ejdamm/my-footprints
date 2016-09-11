@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">My footsteps</string>
     <string name="title_activity_main">My footsteps</string>
-    <string name="button_map">Go to map</string>
+    <string name="empty">""</string>
+    <string name="map_button">Go to map</string>
+    <string name="tracking_button">Start tracking</string>
+    <string name="missing_gps_error">My footsteps needs to access your location in order to function.</string>
 </resources>

@@ -24,13 +24,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements
-        OnMapReadyCallback,
-        LocationProvider.LocationCallback {
+        OnMapReadyCallback {
     public static final String TAG = MapsActivity.class.getSimpleName();
     private GoogleMap mMap;
-    private LocationProvider mLocationProvider;
+
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    public final static String MISSING_GPS_MESSAGE = "com.example.myfirstapp.MISSING_GPS_MESSAGE";
     private boolean mPermissionDenied = false;
 
     @Override
@@ -41,39 +39,12 @@ public class MapsActivity extends FragmentActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        mLocationProvider = new LocationProvider(this, this, this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mLocationProvider.connect();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mLocationProvider.disconnect();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         enableMyLocation();
-    }
-
-    public void handleNewLocation(Location location) {
-        double currentLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-        LatLng myPosition = new LatLng(currentLatitude, currentLongitude);
-
-        //mMap.addMarker(new MarkerOptions().position(myPosition).title("Your position"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(myPosition));
-
-        TextView textView = new TextView(this);
-        textView = (TextView)findViewById(R.id.Coordinates);
-        textView.setText(myPosition.toString());
     }
 
     @Override
@@ -120,8 +91,6 @@ public class MapsActivity extends FragmentActivity implements
 
     private void showMissingPermissionError() {
         Intent intent = new Intent(this, MainActivity.class);
-        String message = "My footsteps needs to access your location in order to function.";
-        intent.putExtra(MISSING_GPS_MESSAGE, message);
         startActivity(intent);
     }
 }
