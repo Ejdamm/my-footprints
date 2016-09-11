@@ -75,11 +75,8 @@ public class LocationProvider implements
 
             Log.i(TAG, "Location permission granted.");
             Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (location == null) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            } else {
-                mLocationCallback.handleNewLocation(location);
-            }
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            mLocationCallback.handleNewLocation(location);
         }
         else {
             Log.i(TAG, "Location permission denied.");
