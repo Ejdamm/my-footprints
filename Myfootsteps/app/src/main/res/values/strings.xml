@@ -3,6 +3,7 @@
     <string name="title_activity_main">My footsteps</string>
     <string name="empty">""</string>
     <string name="map_button">Go to map</string>
-    <string name="tracking_button">Start tracking</string>
+    <string name="tracking_button_start">Start tracking</string>
+    <string name="tracking_button_stop">Stop tracking</string>
     <string name="missing_gps_error">My footsteps needs to access your location in order to function.</string>
 </resources>

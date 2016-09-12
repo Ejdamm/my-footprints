@@ -29,16 +29,16 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/tracking_button"
-            android:id="@+id/tracking_button"
+            android:text="@string/tracking_button_start"
+            android:id="@+id/toggle_tracking_button"
             android:layout_gravity="center_horizontal"
-            android:onClick="startTracking"/>
+            android:onClick="toggleTracking"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:id="@+id/Coordinates"
+            android:id="@+id/coordinates"
             android:layout_gravity="center_horizontal" />
 
         <TextView
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text=""
-            android:id="@+id/Display_Error"
+            android:id="@+id/display_error"
             android:layout_gravity="center_horizontal"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />

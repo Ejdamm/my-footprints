@@ -57,18 +57,23 @@ public class LocationProvider implements
     }
 
     public void connect() {
-        mGoogleApiClient.connect();
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
+        else {
+            getPermission();
+        }
     }
 
     public void disconnect() {
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
+            mLocationCallback.handleNewLocation(null);
         }
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
+    public void getPermission() {
         Log.i(TAG, "Location services connected.");
         if (ContextCompat.checkSelfPermission(mContext,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -77,8 +82,7 @@ public class LocationProvider implements
             Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             mLocationCallback.handleNewLocation(location);
-        }
-        else {
+        } else {
             Log.i(TAG, "Location permission denied.");
             ActivityCompat.requestPermissions(mActivity,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -87,9 +91,12 @@ public class LocationProvider implements
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-
+    public void onConnected(Bundle bundle) {
+        getPermission();
     }
+
+    @Override
+    public void onConnectionSuspended(int i) {}
 
     @Override
     public void onLocationChanged(Location location) {
