@@ -21,12 +21,16 @@ public class MainActivity extends AppCompatActivity implements
     private static final int RESET_ERROR = 0;
     private static final int MISSING_GPS_ERROR = 1;
     private boolean trackingStarted = false;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLocationProvider = new LocationProvider(this, this, this);
+        dbHelper = new DBHelper(this);
+        //show nr of rows database
+        displayError(9);
     }
 
     @Override
@@ -114,15 +118,23 @@ public class MainActivity extends AppCompatActivity implements
         TextView textView;
         textView = (TextView) findViewById(R.id.display_error);
         switch (errorCode) {
+            case RESET_ERROR: {
+                String error = getResources().getString(R.string.empty);
+                textView.setText(error);
+                break;
+            }
             case MISSING_GPS_ERROR: {
                 String error = getResources().getString(R.string.missing_gps_error);
                 textView.setText(error);
                 break;
             }
-            default: {
-                String error = getResources().getString(R.string.empty);
+            case 9: {
+                Integer interror = dbHelper.numberOfRows();
+                String error = "Nr of rows in database: " + interror.toString();
                 textView.setText(error);
+                break;
             }
+
         }
 
     }
