@@ -7,21 +7,29 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity implements
         LocationProvider.LocationCallback {
 
+    public static final String TAG = MainActivity.class.getSimpleName();
     private LocationProvider mLocationProvider;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int RESET_ERROR = 0;
     private static final int MISSING_GPS_ERROR = 1;
+    private static final int ROWS = 2;
     private boolean trackingStarted = false;
+    private long sessionid = 0;
     private DBHelper dbHelper;
+    Date date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +37,14 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         mLocationProvider = new LocationProvider(this, this, this);
         dbHelper = new DBHelper(this);
-        //show nr of rows database
-        displayError(9);
+        dbHelper.clean();
+    }
+
+    private void appendLatestEntry() {
+        TextView textView;
+        textView = (TextView) findViewById(R.id.textViewEntries);
+        ArrayList<CoordinatesContainer> allRows = dbHelper.getAllEntries();
+        textView.append(allRows.get(allRows.size()-1).toString() + "\n");
     }
 
     @Override
@@ -81,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements
                     android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 toggleTrackingText();
                 trackingStarted = true;
+                date = new Date();
+                sessionid = date.getTime()/1000;
             }
         }
     }
@@ -106,6 +122,13 @@ public class MainActivity extends AppCompatActivity implements
             double currentLongitude = location.getLongitude();
             LatLng myPosition = new LatLng(currentLatitude, currentLongitude);
             textView.setText(myPosition.toString());
+
+            date = new Date();
+            long timestamp = date.getTime()/1000;
+            dbHelper.insertCoordinates(sessionid, timestamp, currentLatitude, currentLongitude);
+            appendLatestEntry();
+            displayError(ROWS);
+
         }
         else {
             String empty = getResources().getString(R.string.empty);
@@ -128,8 +151,9 @@ public class MainActivity extends AppCompatActivity implements
                 textView.setText(error);
                 break;
             }
-            case 9: {
+            case ROWS: {
                 Integer interror = dbHelper.numberOfRows();
+                Log.i(TAG, "Nr of rows in database: " + interror.toString());
                 String error = "Nr of rows in database: " + interror.toString();
                 textView.setText(error);
                 break;

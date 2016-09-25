@@ -50,8 +50,8 @@ public class LocationProvider implements
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1000); // 1 second, in milliseconds
+                .setInterval(5000)
+                .setFastestInterval(5000);
 
         mContext = context;
     }
@@ -81,7 +81,6 @@ public class LocationProvider implements
             Log.i(TAG, "Location permission granted.");
             Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            mLocationCallback.handleNewLocation(location);
         } else {
             Log.i(TAG, "Location permission denied.");
             ActivityCompat.requestPermissions(mActivity,
