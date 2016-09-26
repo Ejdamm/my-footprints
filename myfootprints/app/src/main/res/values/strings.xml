@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">My footprints</string>
+    <string name="title_activity_main">My footprints</string>
+    <string name="empty">""</string>
+    <string name="map_button">Go to map</string>
+    <string name="tracking_button_start">Start tracking</string>
+    <string name="tracking_button_stop">Stop tracking</string>
+    <string name="missing_gps_error">My footprints needs to access your location in order to function.</string>
+</resources>
