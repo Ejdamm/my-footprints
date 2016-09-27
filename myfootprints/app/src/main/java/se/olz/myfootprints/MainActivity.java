@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements
         LocationProvider.LocationCallback {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    private LocationProvider mLocationProvider;
+    private LocationProvider locationProvider;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int RESET_ERROR = 0;
     private static final int MISSING_GPS_ERROR = 1;
@@ -35,14 +35,13 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mLocationProvider = new LocationProvider(this, this, this);
+        locationProvider = new LocationProvider(this, this, this);
         db = new DBHelper(this);
-        db.clean();
+        displayError(ROWS);
     }
 
     private void appendLatestEntry() {
-        TextView textView;
-        textView = (TextView) findViewById(R.id.textViewEntries);
+        TextView textView = (TextView) findViewById(R.id.textViewEntries);
         ArrayList<CoordinatesContainer> allRows = db.getAllEntries();
         textView.append(allRows.get(allRows.size()-1).toString() + "\n");
     }
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mLocationProvider.disconnect();
+        locationProvider.disconnect();
     }
 
     @Override
@@ -62,12 +61,12 @@ public class MainActivity extends AppCompatActivity implements
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     displayError(RESET_ERROR);
-                    mLocationProvider.connect();
+                    locationProvider.connect();
                     toggleTrackingText();
                     trackingStarted = true;
                 }
                 else {
-                    mLocationProvider.disconnect();
+                    locationProvider.disconnect();
                     displayError(MISSING_GPS_ERROR);
 
                 }
@@ -76,29 +75,34 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void startMapActivity(View view)
-    {
+    public void startMapActivity(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
 
-    public void toggleTracking(View view)
-    {
+    public void toggleTracking(View view) {
         if (trackingStarted) {
-            mLocationProvider.disconnect();
+            locationProvider.disconnect();
             toggleTrackingText();
             trackingStarted = false;
         }
         else {
-            mLocationProvider.connect();
+            date = new Date();
+            sessionid = date.getTime()/1000;
+            locationProvider.connect();
             if (ContextCompat.checkSelfPermission(this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 toggleTrackingText();
                 trackingStarted = true;
-                date = new Date();
-                sessionid = date.getTime()/1000;
             }
         }
+    }
+
+    public void clearDatabase(View view) {
+        db.clean();
+        displayError(ROWS);
+        TextView textView = (TextView) findViewById(R.id.textViewEntries);
+        textView.setText("Entries:\n");
     }
 
     private void toggleTrackingText() {
@@ -115,26 +119,17 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void handleNewLocation(Location location) {
-        TextView textView;
-        textView = (TextView)findViewById(R.id.coordinates);
         if (location != null) {
             double currentLatitude = location.getLatitude();
             double currentLongitude = location.getLongitude();
             LatLng myPosition = new LatLng(currentLatitude, currentLongitude);
-            textView.setText(myPosition.toString());
 
             date = new Date();
             long timestamp = date.getTime()/1000;
             db.insertCoordinates(sessionid, timestamp, currentLatitude, currentLongitude);
             appendLatestEntry();
             displayError(ROWS);
-
         }
-        else {
-            String empty = getResources().getString(R.string.empty);
-            textView.setText(empty);
-        }
-
     }
 
     public void displayError(int errorCode) {

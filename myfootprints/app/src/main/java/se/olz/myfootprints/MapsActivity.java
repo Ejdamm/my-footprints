@@ -1,12 +1,15 @@
 package se.olz.myfootprints;
 
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -31,10 +34,22 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap map) {
         ArrayList<CoordinatesContainer> allRows = db.getAllEntries();
-        for(int i = 0; i < allRows.size(); i++) {
-            map.addMarker(new MarkerOptions()
-                    .position(new LatLng(allRows.get(i).getLatitude(), allRows.get(i).getLongitude())));
+        LatLng position;
+        int size = allRows.size();
+        for(int i = 0; i < size; i++) {
+            position = new LatLng(allRows.get(i).getLatitude(), allRows.get(i).getLongitude());
+            if (allRows.get(i).getOccurance() > 1) {
+                map.addMarker(new MarkerOptions()
+                        .position(position)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+            } else {
+                map.addMarker(new MarkerOptions()
+                        .position(position));
+            }
         }
-
+        if (size > 0) {
+            position = new LatLng(allRows.get(size - 1).getLatitude(), allRows.get(size - 1).getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
+        }
     }
 }
