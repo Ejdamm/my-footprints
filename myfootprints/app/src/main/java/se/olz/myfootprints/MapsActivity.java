@@ -1,6 +1,5 @@
 package se.olz.myfootprints;
 
-import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -18,7 +17,8 @@ import java.util.ArrayList;
 public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback {
     public static final String TAG = MapsActivity.class.getSimpleName();
-    private DBHelper db;
+    private ArrayList<RawPositions> allRows;
+    private float zoomLevel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,17 +28,19 @@ public class MapsActivity extends FragmentActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        db = new DBHelper(this);
+        DBHelper db = new DBHelper(this);
+        allRows = db.getAllEntries();
+        zoomLevel = 15;
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
-        ArrayList<CoordinatesContainer> allRows = db.getAllEntries();
+        ZoomPosContainer toMark = new ZoomPosContainer(allRows, zoomLevel, -1);
         LatLng position;
-        int size = allRows.size();
+        int size = toMark.zoomedPositions.size();
         for(int i = 0; i < size; i++) {
-            position = new LatLng(allRows.get(i).getLatitude(), allRows.get(i).getLongitude());
-            if (allRows.get(i).getOccurance() > 1) {
+            position = new LatLng(toMark.get(i).getLatitude(), toMark.get(i).getLongitude());
+            if (toMark.zoomedPositions.get(i).getOccurance() > 1) {
                 map.addMarker(new MarkerOptions()
                         .position(position)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
@@ -48,8 +50,8 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
         if (size > 0) {
-            position = new LatLng(allRows.get(size - 1).getLatitude(), allRows.get(size - 1).getLongitude());
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
+            position = new LatLng(toMark.get(size - 1).getLatitude(), toMark.get(size - 1).getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, zoomLevel));
         }
     }
 }

@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void appendLatestEntry() {
         TextView textView = (TextView) findViewById(R.id.textViewEntries);
-        ArrayList<CoordinatesContainer> allRows = db.getAllEntries();
+        ArrayList<RawPositions> allRows = db.getAllEntries();
         textView.append(allRows.get(allRows.size()-1).toString() + "\n");
     }
 

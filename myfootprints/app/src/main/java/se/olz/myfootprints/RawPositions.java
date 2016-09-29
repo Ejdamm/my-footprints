@@ -1,30 +1,27 @@
 package se.olz.myfootprints;
 
-public class CoordinatesContainer {
+public class RawPositions {
     private int id;
     private long session;
     private long accessedTimestamp;
     private double latitude;
     private double longitude;
-    private int occurance;
 
-    CoordinatesContainer(
+    RawPositions(
             int id,
             long session,
             long accessedTimestamp,
             double latitude,
-            double longitude,
-            int occurance) {
+            double longitude) {
         this.id = id;
         this.session = session;
         this.accessedTimestamp = accessedTimestamp;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.occurance = occurance;
     }
 
     public String toString() {
-        return id + ", " + session + ", " + accessedTimestamp + ", " + latitude + ", " + longitude + ", " + occurance;
+        return id + ", " + session + ", " + accessedTimestamp + ", " + latitude + ", " + longitude;
     }
 
     public int getId() {
@@ -46,6 +43,4 @@ public class CoordinatesContainer {
     public double getLongitude() {
         return longitude;
     }
-
-    public int getOccurance() {return occurance;}
 }
