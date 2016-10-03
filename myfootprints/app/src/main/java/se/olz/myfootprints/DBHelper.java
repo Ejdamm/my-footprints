@@ -14,8 +14,8 @@ import static java.lang.String.valueOf;
 
 public class DBHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 8;
-    private static final String DATABASE_NAME = "Coordinates.db";
+    private static final int DATABASE_VERSION = 12;
+    private static final String DATABASE_NAME = "myfootprints.db";
     private static final String TABLE_NAME = "positions";
     private static final String COLUMN_NAME_ID = "id";
     private static final String COLUMN_NAME_SESSION = "session";
@@ -23,14 +23,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NAME_LATITUDE = "latitude";
     private static final String COLUMN_NAME_LONGITUDE= "longitude";
     private static final String DOUBLE_TYPE = " DOUBLE";
-    private static final String INT_TYPE = " INT";
-    private static final String LONG_TYPE = " LONG";
+    private static final String INT_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TABLE_NAME + " (" +
-                    COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
-                    COLUMN_NAME_SESSION + LONG_TYPE + COMMA_SEP +
-                    COLUMN_NAME_TIMESTAMP + LONG_TYPE + COMMA_SEP +
+                    COLUMN_NAME_ID + INT_TYPE + " PRIMARY KEY, " +
+                    COLUMN_NAME_SESSION + INT_TYPE + COMMA_SEP +
+                    COLUMN_NAME_TIMESTAMP + INT_TYPE + COMMA_SEP +
                     COLUMN_NAME_LATITUDE + DOUBLE_TYPE + COMMA_SEP +
                     COLUMN_NAME_LONGITUDE + DOUBLE_TYPE +" )";
     public static final String TAG = DBHelper.class.getSimpleName();
@@ -55,26 +54,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_NAME, null, null);
     }
 
-    /*private static double roundDown4(double d) {
-        return (long) (d * 1e4) / 1e4;
-    }*/
-
-    /*private int findOccurance(double latitude, double longitude) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] args = {
-                valueOf(latitude),
-                valueOf(longitude)
-        };
-        Cursor res = db.query(TABLE_NAME, new String[] {COLUMN_NAME_ID}, COLUMN_NAME_LATITUDE+" = ? AND "+COLUMN_NAME_LONGITUDE+" = ?", args, null, null, null);
-        int id = -1;
-        if (res.getCount() > 0) {
-            res.moveToLast();
-            id = res.getInt(res.getColumnIndex(COLUMN_NAME_ID));
-            res.close();
-        }
-        return id;
-    }*/
-
     public boolean insertCoordinates(long session, long accessedTimestamp, double latitude, double longitude)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -95,8 +74,10 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<RawPositions> getAllEntries() {
-        ArrayList<RawPositions> CoordinateEntries = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
+
+        final ArrayList<RawPositions> CoordinateEntries = new ArrayList<>();
+        final SQLiteDatabase db = this.getReadableDatabase();
+
         Cursor res =  db.rawQuery( "SELECT * FROM " + TABLE_NAME, null );
         res.moveToFirst();
 
