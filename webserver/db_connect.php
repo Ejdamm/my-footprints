@@ -20,7 +20,7 @@ class DB_CONNECT {
 	
 		if ($this->db->connect_error)
 		{
-			die("Connection failed: " . $conn->connect_error);
+			die("Connection failed: " . $this->db->connect_error);
 		}
  
 		return $this->db;
@@ -29,16 +29,53 @@ class DB_CONNECT {
 	public function close()
 	{
         	if($this->db != null)
-			mysqli_close($this->db);
+			$this->db->close();	
     	}
-	
-	public function fetchAll()
+
+	public function createTable($table)
 	{
-		$sql = "SELECT * FROM " . DB_TABLE_POSITIONS;
-		if (!$result = mysqli_query($this->db, $sql))
+		$sql = "CREATE TABLE IF NOT EXISTS $table (
+  			`id` int(11) NOT NULL,
+  			`session` int(11) DEFAULT NULL,
+  			`accessedTimestamp` int(11) DEFAULT NULL,
+ 			`latitude` double DEFAULT NULL,
+  			`longitude` double DEFAULT NULL,
+			PRIMARY KEY (`id`)
+			)";
+		if (!$this->db->query($sql))
 		{
-			die("Error description: " . mysqli_error($this->db));
+			die("Error description: " . $this->db->error);
+		}
+	}
+	
+	public function pull($table, $lastId)
+	{
+		$this->createTable($table);
+		$sql = "SELECT * FROM $table WHERE `id` > $lastId";
+		if (!$result = $this->db->query($sql))
+		{
+			die("Error description: " . $this->db->error);
 		}
 		return $result->fetch_all();
 	}
+
+	public function push($table, $arr)
+	{
+		$columns =  "id, session, accessedTimestamp, latitude, longitude";
+		foreach($arr as $row)
+		{
+			$id = $row['id'];
+			$session = $row['session'];
+			$accessedTimestamp = $row['accessedTimestamp'];
+			$latitude = $row['latitude'];
+			$longitude = $row['longitude'];
+			$values = "$id, $session, $accessedTimestamp, $latitude, $longitude";	
+			$sql = "INSERT INTO $table ($columns) VALUES ($values)";
+			if (!$this->db->query($sql))
+			{
+				die("Error description: " . $this->db->error);
+                	}
+		}
+	}
+
 }
