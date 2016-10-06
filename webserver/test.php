@@ -1,17 +1,29 @@
 <?php
 	include 'db_connect.php';
-	echo "Welcome, I am connecting Android to PHP, MySQL<br>";
 	$db = new DB_CONNECT();
+
+	$json = file_get_contents('php://input');
+	$jsonarr = json_decode($json, true);
+	//$tofile = print_r($jsonarr, true);
+
+	//$myfile = fopen("logfile.txt", "w");
+	//if (!empty($jsonarr)) fwrite($myfile, $tofile . "\n");
+	//fclose($myfile);
 	
-	$insert = array();
+	/*$insert = array();
 	$insert[] = array(
-		"id" => 3,
+		"id" => 12,
 		"session" => 1,
 		"accessedTimestamp" => 1,
 		"latitude" => 1,
 		"longitude" => 1
 	);
-	
-	//$db->push("positions", $insert);
-	print_r($db->pull("positions3", 0));
+	if (isset($_POST['key']))
+	{
+		//$db->push("positions", $insert);
+	}*/
+	//echo print_r($insert, true);
+	$db->push("positions", $jsonarr);
+
+	//print_r($db->pull("positions", 0));
 ?>
