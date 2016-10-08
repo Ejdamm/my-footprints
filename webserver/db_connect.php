@@ -34,7 +34,7 @@ class DB_CONNECT {
 
 	public function createTable($table)
 	{
-		$sql = "CREATE TABLE IF NOT EXISTS $table (
+		$sql = "CREATE TABLE IF NOT EXISTS '$table' (
   			`id` int(11) NOT NULL,
   			`session` int(11) DEFAULT NULL,
   			`accessedTimestamp` int(11) DEFAULT NULL,
@@ -48,10 +48,21 @@ class DB_CONNECT {
 		}
 	}
 	
+	public function authenticate($email, $token)
+	{
+		$hashedToken = md5($token);
+		$sql = "SELECT id FROM users WHERE email = '$email' AND hashedToken = '$hashedToken'";
+		if (!$result = $this->db->query($sql))
+		{
+			die("Error description: " . $this->db->error);
+		}
+		return $result->num_rows;
+	}
+	
 	public function pull($table, $lastId)
 	{
 		$this->createTable($table);
-		$sql = "SELECT * FROM $table WHERE `id` > $lastId";
+		$sql = "SELECT * FROM '$table' WHERE `id` > '$lastId'";
 		if (!$result = $this->db->query($sql))
 		{
 			die("Error description: " . $this->db->error);
@@ -70,7 +81,7 @@ class DB_CONNECT {
 			$latitude = $row['latitude'];
 			$longitude = $row['longitude'];
 			$values = "$id, $session, $accessedTimestamp, $latitude, $longitude";	
-			$sql = "INSERT INTO $table ($columns) VALUES ($values)";
+			$sql = "INSERT INTO '$table' ($columns) VALUES ($values)";
 			if (!$this->db->query($sql))
 			{
 				die("Error description: " . $this->db->error);

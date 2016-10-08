@@ -1,9 +1,9 @@
 <?php
 	include 'db_connect.php';
 	$db = new DB_CONNECT();
-
-	$json = file_get_contents('php://input');
-	$jsonarr = json_decode($json, true);
+	echo $db->authenticate("test@test.se", "token");
+//	$json = file_get_contents('php://input');
+//	$jsonarr = json_decode($json, true);
 	//$tofile = print_r($jsonarr, true);
 
 	//$myfile = fopen("logfile.txt", "w");
@@ -23,7 +23,6 @@
 		//$db->push("positions", $insert);
 	}*/
 	//echo print_r($insert, true);
-	$db->push("positions", $jsonarr);
+//	$db->push("positions", $jsonarr);
 
 	//print_r($db->pull("positions", 0));
-?>
