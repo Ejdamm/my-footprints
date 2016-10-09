@@ -29,15 +29,22 @@ public class MainActivity extends AppCompatActivity implements
     private boolean trackingStarted = false;
     private long sessionid = 0;
     private DBHelper db;
+    private WebHandler web;
+    //private DBUsers db_user;
     Date date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        new User("example@example.se", "token");
         locationProvider = new LocationProvider(this, this, this);
-        db = new DBHelper(this);
+        db = new DBHelper(this, User.getEmail());
+        //db_user = new DBUsers(this);
         displayError(ROWS);
+        web = new WebHandler(this);
+        //web.push(0);
+        web.pull();
     }
 
     private void appendLatestEntry() {
@@ -48,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         locationProvider.disconnect();
+        super.onDestroy();
     }
 
     @Override
@@ -122,11 +129,10 @@ public class MainActivity extends AppCompatActivity implements
         if (location != null) {
             double currentLatitude = location.getLatitude();
             double currentLongitude = location.getLongitude();
-            LatLng myPosition = new LatLng(currentLatitude, currentLongitude);
-
             date = new Date();
             long timestamp = date.getTime()/1000;
-            db.insertCoordinates(sessionid, timestamp, currentLatitude, currentLongitude);
+
+            db.insertOne(new RawPositions(-1, sessionid, timestamp, currentLatitude, currentLongitude));
             appendLatestEntry();
             displayError(ROWS);
         }

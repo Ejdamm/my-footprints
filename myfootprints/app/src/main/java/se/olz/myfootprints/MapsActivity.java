@@ -28,7 +28,7 @@ public class MapsActivity extends FragmentActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        DBHelper db = new DBHelper(this);
+        DBHelper db = new DBHelper(this, User.getEmail());
         allRows = db.getAllEntries();
         zoomLevel = 15;
     }

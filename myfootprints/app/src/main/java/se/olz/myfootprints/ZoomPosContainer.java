@@ -19,9 +19,6 @@ public class ZoomPosContainer {
                 insert(rawPositions);
             } else insert(rawPositions, session);
             quickSort(0, zoomedPositions.size()-1);
-            for(int i = 0; i < zoomedPositions.size(); i++) {
-                Log.d(TAG, valueOf(zoomedPositions.get(i).getLatitude()) + ", " + valueOf(zoomedPositions.get(i).getLongitude()));
-            }
             mergeEquals();
             defrag();
         }
@@ -30,10 +27,8 @@ public class ZoomPosContainer {
     private void insert(ArrayList<RawPositions> rawPositions) {
         double latitude, longitude;
         for (int i = 0; i < rawPositions.size(); i++) {
-            //latitude = roundDown(rawPositions.get(i).getLatitude());
-            //longitude = roundDown(rawPositions.get(i).getLongitude());
-            latitude = rawPositions.get(i).getLatitude();
-            longitude = rawPositions.get(i).getLongitude();
+            latitude = roundDown(rawPositions.get(i).getLatitude());
+            longitude = roundDown(rawPositions.get(i).getLongitude());
             ZoomPos zoomPos = new ZoomPos(latitude, longitude);
             zoomedPositions.add(zoomPos);
         }
