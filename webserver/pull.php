@@ -3,19 +3,15 @@
 	$db = new DB_CONNECT();
 
 	$injson = file_get_contents('php://input');
-	$injsonarr = json_decode($json, true);
+	$injsonarr = json_decode($injson, true);
 	//authenticate token
 	//continue if valid
 	$table = $injsonarr['email'];
 	$lastId = $injsonarr['lastid']; 
 
-	//echo file_put_contents('php://output', 'PHPME'>
-	//$success = array("success" => "1");
 	$rows = $db->pull($table, $lastId);
 	$outjsonarr = array("success" => "1", "data" => $rows);
-	$outjson = json_encode($outjsonarr);
+	$outjson = json_encode($outjsonarr, JSON_FORCE_OBJECT);
 
-	echo "<pre>";
 	print_r($outjson);
-	echo "</pre>";
 ?>

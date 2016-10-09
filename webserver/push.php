@@ -3,5 +3,6 @@
 	$db = new DB_CONNECT();
 	$json = file_get_contents('php://input');
 	$jsonarr = json_decode($json, true);
-	$db->push("positions", $jsonarr);
+	//if authenticate
+		$db->push($jsonarr['credentials']['email'], $jsonarr['data']);
 ?>

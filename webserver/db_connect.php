@@ -32,9 +32,23 @@ class DB_CONNECT {
 			$this->db->close();	
     	}
 
+	public function getLastId($table)
+	{
+		$sql = "SELECT id FROM `$table` ORDER BY id DESC LIMIT 1";
+		if (!$query = $this->db->query($sql))
+		{
+			die("Error description: " . $this->db->error);
+		}
+		$row = $query->fetch_row();
+		$result = null;
+		if ($row != null)
+			$result = $row[0];
+		return $result;	
+	}
+
 	public function createTable($table)
 	{
-		$sql = "CREATE TABLE IF NOT EXISTS '$table' (
+		$sql = "CREATE TABLE IF NOT EXISTS `$table` (
   			`id` int(11) NOT NULL,
   			`session` int(11) DEFAULT NULL,
   			`accessedTimestamp` int(11) DEFAULT NULL,
@@ -51,7 +65,7 @@ class DB_CONNECT {
 	public function authenticate($email, $token)
 	{
 		$hashedToken = md5($token);
-		$sql = "SELECT id FROM users WHERE email = '$email' AND hashedToken = '$hashedToken'";
+		$sql = "SELECT id FROM users WHERE email = `$email` AND hashedToken = `$hashedToken`";
 		if (!$result = $this->db->query($sql))
 		{
 			die("Error description: " . $this->db->error);
@@ -62,17 +76,18 @@ class DB_CONNECT {
 	public function pull($table, $lastId)
 	{
 		$this->createTable($table);
-		$sql = "SELECT * FROM '$table' WHERE `id` > '$lastId'";
+		$sql = "SELECT * FROM `$table` WHERE `id` > $lastId";
 		if (!$result = $this->db->query($sql))
 		{
 			die("Error description: " . $this->db->error);
 		}
-		return $result->fetch_all();
+		return $result->fetch_all(MYSQLI_ASSOC);
 	}
 
 	public function push($table, $arr)
 	{
-		$columns =  "id, session, accessedTimestamp, latitude, longitude";
+		$this->createTable($table);
+		$columns =  "`id`, `session`, `accessedTimestamp`, `latitude`, `longitude`";
 		foreach($arr as $row)
 		{
 			$id = $row['id'];
@@ -81,7 +96,7 @@ class DB_CONNECT {
 			$latitude = $row['latitude'];
 			$longitude = $row['longitude'];
 			$values = "$id, $session, $accessedTimestamp, $latitude, $longitude";	
-			$sql = "INSERT INTO '$table' ($columns) VALUES ($values)";
+			$sql = "INSERT INTO `$table` ($columns) VALUES ($values)";
 			if (!$this->db->query($sql))
 			{
 				die("Error description: " . $this->db->error);
