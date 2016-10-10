@@ -1,0 +1,6 @@
+{
+"host": "localhost",
+"passwd": "password",
+"login": "root",
+"database_footprints": "my_footprints"
+}
