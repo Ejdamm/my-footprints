@@ -11,6 +11,8 @@
 	{
 		$rows = $db->pull($table, $lastId);
 		$serverLastId = $db->getLastId($table);
+		if ($serverLastId == null)
+			$serverLastId = 0;
 		$outjsonarr = array("success" => $auth, "lastid" => $serverLastId, "data" => $rows);
 	}
 	else
