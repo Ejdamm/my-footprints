@@ -10,11 +10,12 @@
 	if ($auth == 0)
 	{
 		$rows = $db->pull($table, $lastId);
-		$outjsonarr = array("success" => $auth, "data" => $rows);
+		$serverLastId = $db->getLastId($table);
+		$outjsonarr = array("success" => $auth, "lastid" => $serverLastId, "data" => $rows);
 	}
 	else
 	{
-		$outjsonarr = array("success" => $auth, "data" => "");
+		$outjsonarr = array("success" => $auth, "lastid" => -1, "data" => "");
 	}
 	$outjson = json_encode($outjsonarr, JSON_FORCE_OBJECT);
 	print_r($outjson);
