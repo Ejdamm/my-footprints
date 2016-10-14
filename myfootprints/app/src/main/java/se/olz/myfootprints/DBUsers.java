@@ -14,7 +14,7 @@ import static java.lang.String.valueOf;
 
 public class DBUsers extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "myfootprints_users.db";
     private static final String TABLE_NAME = "users";
     private static final String COLUMN_NAME_ID = "id";
@@ -53,8 +53,63 @@ public class DBUsers extends SQLiteOpenHelper {
         db.delete(TABLE_NAME, null, null);
     }
 
-    public int numberOfRows(){
+    public boolean isLoggedIn() {
+        boolean flag = false;
         SQLiteDatabase db = this.getReadableDatabase();
-        return (int) DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME_LOGGEDIN + "=1 LIMIT 1";
+        Cursor res =  db.rawQuery(sql, null);
+        res.moveToFirst();
+        if (res.getCount() > 0) {
+            String email = res.getString(res.getColumnIndex(COLUMN_NAME_EMAIL));
+            String token = res.getString(res.getColumnIndex(COLUMN_NAME_TOKEN));
+            new User(email, token, -1);
+            flag = true;
+        }
+        res.close();
+        return flag;
+    }
+
+    public void insert(String email, String token) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME_EMAIL, email);
+        contentValues.put(COLUMN_NAME_TOKEN, token);
+        contentValues.put(COLUMN_NAME_LOGGEDIN, false);
+        db.insert(TABLE_NAME, null, contentValues);
+    }
+
+    public void logout() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME_LOGGEDIN, 0);
+        db.update(TABLE_NAME, contentValues, null, null);
+    }
+
+    public void login(String email) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME_LOGGEDIN, 1);
+        db.update(TABLE_NAME, contentValues, COLUMN_NAME_EMAIL + " = ?", new String[] {email});
+        isLoggedIn();
+    }
+
+    public void updateToken() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME_TOKEN, User.getToken());
+        db.update(TABLE_NAME, contentValues, COLUMN_NAME_EMAIL + " = ?", new String[] {User.getEmail()});
+    }
+
+    public boolean exist(String email) {
+        boolean flag = false;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT " + COLUMN_NAME_EMAIL + " FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME_EMAIL + "='" + email + "' LIMIT 1";
+        Cursor res =  db.rawQuery(sql, null);
+        res.moveToFirst();
+        if (res.getCount() > 0) {
+            flag = true;
+        }
+        res.close();
+        return flag;
     }
 }

@@ -90,7 +90,7 @@ public class ZoomPosContainer {
         return left;
     }
 
-    void quickSort(int left, int right)
+    private void quickSort(int left, int right)
     {
         if (left < right)
         {
@@ -103,10 +103,19 @@ public class ZoomPosContainer {
     private double roundDown(double d) {
         double rounded;
         switch (zoomLevel) {
-            case 15: //4 decimals gives an accuracy of 11 meter
+            case 8:
+                rounded = (long) (d * 1e2) / 1e2;
+                break;
+            case 9:
+                rounded = (long) (d * 1e3) / 1e3;
+                break;
+            case 11:
                 rounded = (long) (d * 1e4) / 1e4;
                 break;
-            default:
+            case 16:
+                rounded = (long) (d * 1e5) / 1e5;
+                break;
+            default:  //4 decimals gives an accuracy of 11 meter
                 rounded = (long) (d * 1e4) / 1e4;
                 break;
         }

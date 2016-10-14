@@ -6,4 +6,17 @@
     <string name="tracking_button_start">Start tracking</string>
     <string name="tracking_button_stop">Stop tracking</string>
     <string name="missing_gps_error">My footprints needs to access your location in order to function.</string>
+    <string name="match_passwords">Passwords don\'t match!</string>
+    <string name="invalid_email">Email is not valid!</string>
+    <string name="email_exists">That email is already registered!</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="email">Email</string>
+    <string name="create_account">Create Account</string>
+    <string name="dont_have_account">Don\'t have an account yet?</string>
+    <string name="login">Login</string>
+    <string name="empty_field">Fill in all fields!</string>
+    <string name="connection_error">There was an error with the connection to the server.</string>
+    <string name="wrong_password">Wrong password or email!</string>
+    <string name="logout">Logout</string>
 </resources>

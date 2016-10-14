@@ -3,10 +3,12 @@ package se.olz.myfootprints;
 public class User {
     private static String email;
     private static String token;
+    private static int serverLastId;
 
-    public User(String email, String token) {
+    public User(String email, String token, int lastId) {
         User.email = email;
         User.token = token;
+        User.serverLastId = lastId;
     }
 
     public static String getEmail() {
@@ -23,5 +25,13 @@ public class User {
 
     public static void setToken(String token) {
         User.token = token;
+    }
+
+    public static int getServerLastId() {
+        return serverLastId;
+    }
+
+    public static void setServerLastId(int serverLastId) {
+        User.serverLastId = serverLastId;
     }
 }
