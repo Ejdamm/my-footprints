@@ -79,7 +79,8 @@ class DB_CONNECT {
 		{
 			$row = $result->fetch_row();	
 			$index = $row[0];
-			$token = bin2hex(random_bytes(128));
+			//$token = bin2hex(random_bytes(128)); Only in php7
+			$token = bin2hex(openssl_random_pseudo_bytes(128));
 			$hashedToken = md5($token);
 			$expire = time() + TOKENEXPIRATION;
 			$sql = "UPDATE `users` SET `token` = '$hashedToken', `expire` = $expire WHERE `id` = $index";
@@ -101,7 +102,12 @@ class DB_CONNECT {
 		{
 			die("Error description: " . $this->db->error);
 		}
-		return $result->fetch_all(MYSQLI_ASSOC);
+		$arr = array();
+		while ($row = $result->fetch_assoc())
+		{
+			$arr[] = $row;	
+		}
+		return $arr;
 	}
 
 	public function push($table, $arr)
@@ -121,6 +127,7 @@ class DB_CONNECT {
 				die("Error description: " . $this->db->error);
                 	}
 		}
+		return $id;
 	}
 	
 	public function createUser($email, $password)
@@ -133,7 +140,8 @@ class DB_CONNECT {
 		if ($result->num_rows == 0)
 		{
 			$hashedPassword = md5($password);
-			$token = bin2hex(random_bytes(128));
+			//$token = bin2hex(random_bytes(128)); //only in PHP7
+			$token = bin2hex(openssl_random_pseudo_bytes(128));	
 			$hashedToken = md5($token);
 			$expire = time() + TOKENEXPIRATION;
 			$columns = "`email`, `password`, `token`, `expire`";
