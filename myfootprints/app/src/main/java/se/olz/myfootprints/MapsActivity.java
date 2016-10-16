@@ -88,11 +88,11 @@ public class MapsActivity extends FragmentActivity implements
                 options.zIndex(1.0f);
                 options.alpha(1.0f);
             } else if (toMark.zoomedPositions.get(i).getOccurance() > 10) {
-                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_dorange_marker));
+                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_lorange_marker));
                 options.zIndex(0.8f);
                 options.alpha(1.0f);
             } else if (toMark.zoomedPositions.get(i).getOccurance() > 2) {
-                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_lorange_marker));
+                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_dorange_marker));
                 options.zIndex(0.5f);
                 options.alpha(0.5f);
             } else {

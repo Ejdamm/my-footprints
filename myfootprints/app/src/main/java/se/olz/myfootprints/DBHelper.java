@@ -48,6 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void clean() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, null, null);
+        db.close();
     }
 
     public int getLastId() {
@@ -61,6 +62,7 @@ public class DBHelper extends SQLiteOpenHelper {
         else
             id = 0;
         res.close();
+        db.close();
         return id;
     }
 
@@ -76,6 +78,7 @@ public class DBHelper extends SQLiteOpenHelper {
             contentValues.put(COLUMN_NAME_LONGITUDE, rawPositions.getLongitude());
             db.insert(TABLE_NAME, null, contentValues);
         }
+        db.close();
         return true;
     }
 
@@ -88,25 +91,26 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_NAME_LATITUDE, pos.getLatitude());
         contentValues.put(COLUMN_NAME_LONGITUDE, pos.getLongitude());
         db.insert(TABLE_NAME, null, contentValues);
+        db.close();
         return true;
     }
 
     public int numberOfRows(){
         SQLiteDatabase db = this.getReadableDatabase();
-        return (int) DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+        int nrOf = (int)DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+        db.close();
+        return nrOf;
     }
 
     public ArrayList<RawPositions> getEntries(String sql) {
         final SQLiteDatabase db = this.getReadableDatabase();
         final ArrayList<RawPositions> CoordinateEntries = new ArrayList<>();
         Cursor res =  db.rawQuery(sql, null );
-
         res.moveToFirst();
 
         int id;
         long session, accessedTimestamp;
         double latitude, longitude;
-
         while(!res.isAfterLast()){
             id = res.getInt(res.getColumnIndex(COLUMN_NAME_ID));
             session = res.getLong(res.getColumnIndex(COLUMN_NAME_SESSION));
@@ -118,7 +122,7 @@ public class DBHelper extends SQLiteOpenHelper {
             res.moveToNext();
         }
         res.close();
-
+        db.close();
         return CoordinateEntries;
     }
 

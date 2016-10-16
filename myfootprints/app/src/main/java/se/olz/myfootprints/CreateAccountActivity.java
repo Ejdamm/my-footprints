@@ -21,17 +21,18 @@ public class CreateAccountActivity extends AppCompatActivity {
     }
 
     public void createUser(View view) {
-        EditText eEmail = (EditText)findViewById(R.id.create_email);
-        EditText ePassword = (EditText)findViewById(R.id.create_password);
-        EditText ePassword2 = (EditText)findViewById(R.id.create_password2);
-        TextView eError = (TextView)findViewById(R.id.create_error);
+        EditText eEmail = (EditText) findViewById(R.id.create_email);
+        EditText ePassword = (EditText) findViewById(R.id.create_password);
+        EditText ePassword2 = (EditText) findViewById(R.id.create_password2);
+        TextView eError = (TextView) findViewById(R.id.create_error);
         String email = eEmail.getText().toString();
         String lowerEmail = email.toLowerCase();
         String password = ePassword.getText().toString();
         String password2 = ePassword2.getText().toString();
 
-
-        if (!password.equals(password2)) {
+        if (password.length() < 8) {
+            eError.setText(R.string.short_passwords);
+        } else if (!password.equals(password2)) {
             eError.setText(R.string.match_passwords);
         } else if (!EmailValidator.getInstance().isValid(lowerEmail)){
             eError.setText(R.string.invalid_email);

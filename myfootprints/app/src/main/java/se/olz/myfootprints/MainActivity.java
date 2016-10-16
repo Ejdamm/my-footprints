@@ -37,8 +37,6 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         locationProvider = new LocationProvider(this, this, this);
         db = new DBHelper(this, User.getEmail());
-        displayError(ROWS);
-
     }
 
     @Override
@@ -105,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements
 
     public void clearDatabase(View view) {
         db.clean();
-        displayError(ROWS);
     }
 
     private void toggleTrackingText() {
@@ -127,9 +124,7 @@ public class MainActivity extends AppCompatActivity implements
             double currentLongitude = location.getLongitude();
             date = new Date();
             long timestamp = date.getTime()/1000;
-
             db.insertOne(new RawPositions(-1, sessionid, timestamp, currentLatitude, currentLongitude));
-            displayError(ROWS);
         }
     }
 
@@ -147,15 +142,6 @@ public class MainActivity extends AppCompatActivity implements
                 textView.setText(error);
                 break;
             }
-            case ROWS: {
-                Integer interror = db.numberOfRows();
-                Log.i(TAG, "Nr of rows in database: " + interror.toString());
-                String error = "Nr of rows in database: " + interror.toString();
-                textView.setText(error);
-                break;
-            }
-
         }
-
     }
 }

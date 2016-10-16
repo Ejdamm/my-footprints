@@ -51,6 +51,7 @@ public class DBUsers extends SQLiteOpenHelper {
     public void clean() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, null, null);
+        db.close();
     }
 
     public boolean isLoggedIn() {
@@ -66,6 +67,7 @@ public class DBUsers extends SQLiteOpenHelper {
             flag = true;
         }
         res.close();
+        db.close();
         return flag;
     }
 
@@ -76,6 +78,7 @@ public class DBUsers extends SQLiteOpenHelper {
         contentValues.put(COLUMN_NAME_TOKEN, token);
         contentValues.put(COLUMN_NAME_LOGGEDIN, false);
         db.insert(TABLE_NAME, null, contentValues);
+        db.close();
     }
 
     public void logout() {
@@ -83,6 +86,7 @@ public class DBUsers extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_NAME_LOGGEDIN, 0);
         db.update(TABLE_NAME, contentValues, null, null);
+        db.close();
     }
 
     public void login(String email) {
@@ -91,6 +95,7 @@ public class DBUsers extends SQLiteOpenHelper {
         contentValues.put(COLUMN_NAME_LOGGEDIN, 1);
         db.update(TABLE_NAME, contentValues, COLUMN_NAME_EMAIL + " = ?", new String[] {email});
         isLoggedIn();
+        db.close();
     }
 
     public void updateToken() {
@@ -98,6 +103,7 @@ public class DBUsers extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_NAME_TOKEN, User.getToken());
         db.update(TABLE_NAME, contentValues, COLUMN_NAME_EMAIL + " = ?", new String[] {User.getEmail()});
+        db.close();
     }
 
     public boolean exist(String email) {
@@ -110,6 +116,7 @@ public class DBUsers extends SQLiteOpenHelper {
             flag = true;
         }
         res.close();
+        db.close();
         return flag;
     }
 }
