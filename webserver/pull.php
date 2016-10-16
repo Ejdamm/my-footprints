@@ -4,7 +4,7 @@
 	$injson = file_get_contents('php://input');
 	$injsonarr = json_decode($injson, true);
 	$table = $injsonarr['email'];
-	$token = $injsonarr['token'];
+	$token = $injsonarr['password'];
 	$lastId = $injsonarr['lastid']; 
 	$auth = $db->authenticate($table, $token);
 	if ($auth == 0)
