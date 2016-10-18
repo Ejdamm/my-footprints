@@ -67,7 +67,7 @@ public class WebHandler {
         while ((data = in.read()) != -1) {
             sb.append((char) data);
         }
-        //Log.d(TAG, "Inputstream " + sb.toString());
+        Log.d(TAG, "Inputstream " + sb.toString());
         in.close();
         return sb.toString();
     }

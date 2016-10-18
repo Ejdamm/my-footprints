@@ -83,7 +83,6 @@ public class DBUsers extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_NAME_LOGGEDIN, 1);
         db.update(TABLE_NAME, contentValues, COLUMN_NAME_EMAIL + " = ?", new String[] {email});
-        isLoggedIn();
         db.close();
     }
 
