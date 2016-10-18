@@ -26,8 +26,8 @@ public class LocationProvider implements
         public void handleNewLocation(Location location);
     }
 
-    private static final int UPDATE_INTERVAL = 5000;
-    private static final int UPDATE_EACH_METERS = 10;
+    private static final int UPDATE_INTERVAL = 5000; //milliseconds
+    private static final int UPDATE_EACH_METERS = 10; //meter
     public static final String TAG = LocationProvider.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;

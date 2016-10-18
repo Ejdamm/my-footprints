@@ -1,13 +1,13 @@
 package se.olz.myfootprints;
 
-public class RawPositions {
+public class RawPosition {
     private int id;
     private long session;
     private long accessedTimestamp;
     private double latitude;
     private double longitude;
 
-    RawPositions(
+    RawPosition(
             int id,
             long session,
             long accessedTimestamp,

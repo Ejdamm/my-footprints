@@ -7,14 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements
@@ -25,7 +21,6 @@ public class MainActivity extends AppCompatActivity implements
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int RESET_ERROR = 0;
     private static final int MISSING_GPS_ERROR = 1;
-    private static final int ROWS = 2;
     private boolean trackingStarted = false;
     private long sessionid = 0;
     private DBHelper db;
@@ -101,10 +96,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void clearDatabase(View view) {
-        db.clean();
-    }
-
     private void toggleTrackingText() {
         Button button;
         button = (Button)findViewById(R.id.toggle_tracking_button);
@@ -124,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements
             double currentLongitude = location.getLongitude();
             date = new Date();
             long timestamp = date.getTime()/1000;
-            db.insertOne(new RawPositions(-1, sessionid, timestamp, currentLatitude, currentLongitude));
+            db.insertOne(new RawPosition(-1, sessionid, timestamp, currentLatitude, currentLongitude));
         }
     }
 

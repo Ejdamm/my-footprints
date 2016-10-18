@@ -1,7 +1,5 @@
 package se.olz.myfootprints;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 import static java.lang.String.valueOf;
@@ -11,7 +9,7 @@ public class ZoomPosContainer {
     public ArrayList<ZoomPos> zoomedPositions;
     private int zoomLevel;
 
-    ZoomPosContainer(ArrayList<RawPositions> rawPositions, float zoomLevel, long session) {
+    ZoomPosContainer(ArrayList<RawPosition> rawPositions, float zoomLevel, long session) {
         this.zoomLevel = (int)zoomLevel;
         zoomedPositions = new ArrayList<>();
         if (rawPositions.size() > 0) {
@@ -24,7 +22,7 @@ public class ZoomPosContainer {
         }
     }
 
-    private void insert(ArrayList<RawPositions> rawPositions) {
+    private void insert(ArrayList<RawPosition> rawPositions) {
         double latitude, longitude;
         for (int i = 0; i < rawPositions.size(); i++) {
             latitude = roundDown(rawPositions.get(i).getLatitude());
@@ -34,7 +32,7 @@ public class ZoomPosContainer {
         }
     }
 
-    private void insert(ArrayList<RawPositions> rawPositions, long session) {
+    private void insert(ArrayList<RawPosition> rawPositions, long session) {
         double latitude, longitude;
         for (int i = 0; i < rawPositions.size(); i++) {
             if (rawPositions.get(i).getSession() == session) {

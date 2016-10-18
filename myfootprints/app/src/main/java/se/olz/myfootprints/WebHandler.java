@@ -20,15 +20,10 @@ import static java.lang.String.valueOf;
 public class WebHandler {
     public static final String TAG = WebHandler.class.getSimpleName();
 
-    /*private static final String PUSH_URL = "http://olz.se/my-footprints/webserver/push.php";
+    private static final String PUSH_URL = "http://olz.se/my-footprints/webserver/push.php";
     private static final String PULL_URL = "http://olz.se/my-footprints/webserver/pull.php";
     private static final String LOGIN_URL = "http://olz.se/my-footprints/webserver/login.php";
-    private static final String CREATEUSER_URL = "http://olz.se/my-footprints/webserver/createuser.php";*/
-
-    private static final String PUSH_URL = "http://192.168.1.4/my-footprints/webserver/push.php";
-    private static final String PULL_URL = "http://192.168.1.4/my-footprints/webserver/pull.php";
-    private static final String LOGIN_URL = "http://192.168.1.4/my-footprints/webserver/login.php";
-    private static final String CREATEUSER_URL = "http://192.168.1.4/my-footprints/webserver/createuser.php";
+    private static final String CREATEUSER_URL = "http://olz.se/my-footprints/webserver/createuser.php";
 
     private Context context;
 
@@ -83,7 +78,7 @@ public class WebHandler {
         double latitude, longitude;
         JSONObject jsonData = jsonRows.getJSONObject("data");
         Iterator<?> keys = jsonData.keys();
-        ArrayList<RawPositions> toInsert = new ArrayList<>();
+        ArrayList<RawPosition> toInsert = new ArrayList<>();
         while (keys.hasNext()) {
             String key = (String) keys.next();
             JSONObject jsonRawPosition = (JSONObject) jsonData.get(key);
@@ -92,7 +87,7 @@ public class WebHandler {
             accessedTimestamp = jsonRawPosition.getLong("accessedTimestamp");
             latitude = jsonRawPosition.getDouble("latitude");
             longitude = jsonRawPosition.getDouble("longitude");
-            toInsert.add(new RawPositions(id, session, accessedTimestamp, latitude, longitude));
+            toInsert.add(new RawPosition(id, session, accessedTimestamp, latitude, longitude));
         }
         DBHelper db = new DBHelper(context, email);
         db.insertMultiple(toInsert);
@@ -243,7 +238,7 @@ public class WebHandler {
                 try {
                     DBHelper db = new DBHelper(context, User.getEmail());
                     int lastId = User.getServerLastId();
-                    ArrayList<RawPositions> toInsert = db.getAfter(lastId);
+                    ArrayList<RawPosition> toInsert = db.getAfter(lastId);
                     JSONObject jsonData = new JSONObject();
                     for (int i = 0; i < toInsert.size(); i++) {
                         JSONObject jsonRow = new JSONObject();

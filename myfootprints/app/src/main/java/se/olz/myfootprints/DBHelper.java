@@ -4,7 +4,6 @@ package se.olz.myfootprints;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -46,12 +45,6 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void clean() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, null, null);
-        db.close();
-    }
-
     public int getLastId() {
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT id FROM " + TABLE_NAME + " ORDER BY id DESC LIMIT 1";
@@ -67,23 +60,23 @@ public class DBHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public boolean insertMultiple(ArrayList<RawPositions> pos)
+    public boolean insertMultiple(ArrayList<RawPosition> pos)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        for(RawPositions rawPositions : pos){
+        for(RawPosition rawPosition : pos){
             ContentValues contentValues = new ContentValues();
-            contentValues.put(COLUMN_NAME_ID, rawPositions.getId());
-            contentValues.put(COLUMN_NAME_SESSION, rawPositions.getSession());
-            contentValues.put(COLUMN_NAME_TIMESTAMP, rawPositions.getAccessedTimestamp());
-            contentValues.put(COLUMN_NAME_LATITUDE, rawPositions.getLatitude());
-            contentValues.put(COLUMN_NAME_LONGITUDE, rawPositions.getLongitude());
+            contentValues.put(COLUMN_NAME_ID, rawPosition.getId());
+            contentValues.put(COLUMN_NAME_SESSION, rawPosition.getSession());
+            contentValues.put(COLUMN_NAME_TIMESTAMP, rawPosition.getAccessedTimestamp());
+            contentValues.put(COLUMN_NAME_LATITUDE, rawPosition.getLatitude());
+            contentValues.put(COLUMN_NAME_LONGITUDE, rawPosition.getLongitude());
             db.insert(TABLE_NAME, null, contentValues);
         }
         db.close();
         return true;
     }
 
-    public boolean insertOne(RawPositions pos)
+    public boolean insertOne(RawPosition pos)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -96,9 +89,9 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public ArrayList<RawPositions> getEntries(String sql) {
+    public ArrayList<RawPosition> getEntries(String sql) {
         final SQLiteDatabase db = this.getReadableDatabase();
-        final ArrayList<RawPositions> CoordinateEntries = new ArrayList<>();
+        final ArrayList<RawPosition> CoordinateEntries = new ArrayList<>();
         Cursor res =  db.rawQuery(sql, null );
         res.moveToFirst();
 
@@ -111,7 +104,7 @@ public class DBHelper extends SQLiteOpenHelper {
             accessedTimestamp = res.getLong(res.getColumnIndex(COLUMN_NAME_TIMESTAMP));
             latitude = res.getDouble(res.getColumnIndex(COLUMN_NAME_LATITUDE));
             longitude = res.getDouble(res.getColumnIndex(COLUMN_NAME_LONGITUDE));
-            RawPositions row = new RawPositions(id, session, accessedTimestamp, latitude, longitude);
+            RawPosition row = new RawPosition(id, session, accessedTimestamp, latitude, longitude);
             CoordinateEntries.add(row);
             res.moveToNext();
         }
@@ -120,12 +113,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return CoordinateEntries;
     }
 
-    public ArrayList<RawPositions> getAfter(int index) {
+    public ArrayList<RawPosition> getAfter(int index) {
         String sql = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME_ID + " > " + index;
         return getEntries(sql);
     }
 
-    public ArrayList<RawPositions> getAllEntries() {
+    public ArrayList<RawPosition> getAllEntries() {
         String sql =  "SELECT * FROM " + TABLE_NAME;
         return getEntries(sql);
     }

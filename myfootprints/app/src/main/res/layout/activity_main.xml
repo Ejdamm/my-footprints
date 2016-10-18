@@ -41,16 +41,6 @@
         android:padding="2dp" />
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Clear database"
-        android:id="@+id/clear_database_button"
-        android:onClick="clearDatabase"
-        android:layout_above="@+id/logout_button"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
         android:text="@string/logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

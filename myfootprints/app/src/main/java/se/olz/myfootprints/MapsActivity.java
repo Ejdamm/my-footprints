@@ -21,7 +21,7 @@ public class MapsActivity extends FragmentActivity implements
         GoogleMap.OnCameraIdleListener,
         OnMapReadyCallback {
     public static final String TAG = MapsActivity.class.getSimpleName();
-    private ArrayList<RawPositions> allRows;
+    private ArrayList<RawPosition> allRows;
     private float zoomLevel;
     private GoogleMap mMap;
     LatLng lastPosition;
