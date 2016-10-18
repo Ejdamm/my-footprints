@@ -19,9 +19,6 @@ public class ZoomPosContainer {
                 insert(rawPositions);
             } else insert(rawPositions, session);
             quickSort(0, zoomedPositions.size()-1);
-            for(int i = 0; i < zoomedPositions.size(); i++) {
-                Log.d(TAG, valueOf(zoomedPositions.get(i).getLatitude()) + ", " + valueOf(zoomedPositions.get(i).getLongitude()));
-            }
             mergeEquals();
             defrag();
         }
@@ -30,10 +27,8 @@ public class ZoomPosContainer {
     private void insert(ArrayList<RawPositions> rawPositions) {
         double latitude, longitude;
         for (int i = 0; i < rawPositions.size(); i++) {
-            //latitude = roundDown(rawPositions.get(i).getLatitude());
-            //longitude = roundDown(rawPositions.get(i).getLongitude());
-            latitude = rawPositions.get(i).getLatitude();
-            longitude = rawPositions.get(i).getLongitude();
+            latitude = roundDown(rawPositions.get(i).getLatitude());
+            longitude = roundDown(rawPositions.get(i).getLongitude());
             ZoomPos zoomPos = new ZoomPos(latitude, longitude);
             zoomedPositions.add(zoomPos);
         }
@@ -95,7 +90,7 @@ public class ZoomPosContainer {
         return left;
     }
 
-    void quickSort(int left, int right)
+    private void quickSort(int left, int right)
     {
         if (left < right)
         {
@@ -108,10 +103,19 @@ public class ZoomPosContainer {
     private double roundDown(double d) {
         double rounded;
         switch (zoomLevel) {
-            case 15: //4 decimals gives an accuracy of 11 meter
+            case 8:
+                rounded = (long) (d * 1e2) / 1e2;
+                break;
+            case 9:
+                rounded = (long) (d * 1e3) / 1e3;
+                break;
+            case 12:
                 rounded = (long) (d * 1e4) / 1e4;
                 break;
-            default:
+            case 16:
+                rounded = (long) (d * 1e5) / 1e5;
+                break;
+            default:  //4 decimals gives an accuracy of 11 meter
                 rounded = (long) (d * 1e4) / 1e4;
                 break;
         }

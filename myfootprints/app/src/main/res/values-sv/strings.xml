@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mina fotavtryck</string>
+    <string name="confirm_password">Repetera lösenord</string>
+    <string name="connection_error">Det uppstod ett fel med anslutningen till servern.</string>
+    <string name="create_account">Skapa konto</string>
+    <string name="dont_have_account">Har du inget konto?</string>
+    <string name="email">E-post</string>
+    <string name="email_exists">E-posten är redan registrerad.</string>
+    <string name="empty_field">Fyll i alla fält</string>
+    <string name="invalid_email">E-posten är inte giltig</string>
+    <string name="login">Logga in</string>
+    <string name="logout">Logga ut</string>
+    <string name="map_button">Visa kartan</string>
+    <string name="match_passwords">Lösenorden matchar inte.</string>
+    <string name="missing_gps_error">Mina fotavtryck behöver ha tillgång till din plats för att kunna fungera.</string>
+    <string name="password">Lösenord</string>
+    <string name="short_passwords">Lösenordet måste vara minst 8 tecken långt.</string>
+    <string name="title_activity_main">My fotavtryck</string>
+    <string name="tracking_button_start">Starta trackingen</string>
+    <string name="tracking_button_stop">Stoppa trackingen</string>
+    <string name="wrong_password">Fel lösenord eller e-post.</string>
+    <string name="_1_2_visits">1-2 besök</string>
+    <string name="_3_10_visits">3-10 besök</string>
+    <string name="_51_visits">> 51 besök</string>
+    <string name="_11_50_visits">11-50 besök</string>
+    <string name="map_markers">Kartmarkörer</string>
+</resources>

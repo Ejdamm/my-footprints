@@ -14,33 +14,30 @@ import static java.lang.String.valueOf;
 
 public class DBHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 12;
-    private static final String DATABASE_NAME = "myfootprints.db";
-    private static final String TABLE_NAME = "positions";
+    private static final int DATABASE_VERSION = 15;
+    private static final String DATABASE_NAME= "my_footprints.db";
+    private static String TABLE_NAME;
     private static final String COLUMN_NAME_ID = "id";
     private static final String COLUMN_NAME_SESSION = "session";
     private static final String COLUMN_NAME_TIMESTAMP = "accessedTimestamp";
     private static final String COLUMN_NAME_LATITUDE = "latitude";
     private static final String COLUMN_NAME_LONGITUDE= "longitude";
-    private static final String DOUBLE_TYPE = " DOUBLE";
-    private static final String INT_TYPE = " INTEGER";
-    private static final String COMMA_SEP = ",";
-    private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + TABLE_NAME + " (" +
-                    COLUMN_NAME_ID + INT_TYPE + " PRIMARY KEY, " +
-                    COLUMN_NAME_SESSION + INT_TYPE + COMMA_SEP +
-                    COLUMN_NAME_TIMESTAMP + INT_TYPE + COMMA_SEP +
-                    COLUMN_NAME_LATITUDE + DOUBLE_TYPE + COMMA_SEP +
-                    COLUMN_NAME_LONGITUDE + DOUBLE_TYPE +" )";
     public static final String TAG = DBHelper.class.getSimpleName();
 
-    public DBHelper(Context context) {
+    public DBHelper(Context context, String email) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        TABLE_NAME = "`" + email + "`";
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_ENTRIES);
+        String sql = "CREATE TABLE " + TABLE_NAME + " (" +
+                COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " +
+                COLUMN_NAME_SESSION + " INTEGER, " +
+                COLUMN_NAME_TIMESTAMP + " INTEGER, " +
+                COLUMN_NAME_LATITUDE + " DOUBLE, " +
+                COLUMN_NAME_LONGITUDE +  " DOUBLE)";
+        db.execSQL(sql);
     }
 
     @Override
@@ -52,39 +49,62 @@ public class DBHelper extends SQLiteOpenHelper {
     public void clean() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, null, null);
+        db.close();
     }
 
-    public boolean insertCoordinates(long session, long accessedTimestamp, double latitude, double longitude)
+    public int getLastId() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT id FROM " + TABLE_NAME + " ORDER BY id DESC LIMIT 1";
+        Cursor res =  db.rawQuery(sql, null);
+        int id;
+        res.moveToFirst();
+        if (res.getCount() > 0)
+            id = res.getInt(res.getColumnIndex(COLUMN_NAME_ID));
+        else
+            id = 0;
+        res.close();
+        db.close();
+        return id;
+    }
+
+    public boolean insertMultiple(ArrayList<RawPositions> pos)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COLUMN_NAME_SESSION, session);
-        contentValues.put(COLUMN_NAME_TIMESTAMP, accessedTimestamp);
-        contentValues.put(COLUMN_NAME_LATITUDE, latitude);
-        contentValues.put(COLUMN_NAME_LONGITUDE, longitude);
-        db.insert(TABLE_NAME, null, contentValues);
-
+        for(RawPositions rawPositions : pos){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(COLUMN_NAME_ID, rawPositions.getId());
+            contentValues.put(COLUMN_NAME_SESSION, rawPositions.getSession());
+            contentValues.put(COLUMN_NAME_TIMESTAMP, rawPositions.getAccessedTimestamp());
+            contentValues.put(COLUMN_NAME_LATITUDE, rawPositions.getLatitude());
+            contentValues.put(COLUMN_NAME_LONGITUDE, rawPositions.getLongitude());
+            db.insert(TABLE_NAME, null, contentValues);
+        }
+        db.close();
         return true;
     }
 
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        return (int) DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+    public boolean insertOne(RawPositions pos)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME_SESSION, pos.getSession());
+        contentValues.put(COLUMN_NAME_TIMESTAMP, pos.getAccessedTimestamp());
+        contentValues.put(COLUMN_NAME_LATITUDE, pos.getLatitude());
+        contentValues.put(COLUMN_NAME_LONGITUDE, pos.getLongitude());
+        db.insert(TABLE_NAME, null, contentValues);
+        db.close();
+        return true;
     }
 
-    public ArrayList<RawPositions> getAllEntries() {
-
-        final ArrayList<RawPositions> CoordinateEntries = new ArrayList<>();
+    public ArrayList<RawPositions> getEntries(String sql) {
         final SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor res =  db.rawQuery( "SELECT * FROM " + TABLE_NAME, null );
+        final ArrayList<RawPositions> CoordinateEntries = new ArrayList<>();
+        Cursor res =  db.rawQuery(sql, null );
         res.moveToFirst();
 
         int id;
         long session, accessedTimestamp;
         double latitude, longitude;
-
         while(!res.isAfterLast()){
             id = res.getInt(res.getColumnIndex(COLUMN_NAME_ID));
             session = res.getLong(res.getColumnIndex(COLUMN_NAME_SESSION));
@@ -95,8 +115,19 @@ public class DBHelper extends SQLiteOpenHelper {
             CoordinateEntries.add(row);
             res.moveToNext();
         }
-
         res.close();
+        db.close();
         return CoordinateEntries;
     }
+
+    public ArrayList<RawPositions> getAfter(int index) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME_ID + " > " + index;
+        return getEntries(sql);
+    }
+
+    public ArrayList<RawPositions> getAllEntries() {
+        String sql =  "SELECT * FROM " + TABLE_NAME;
+        return getEntries(sql);
+    }
+
 }

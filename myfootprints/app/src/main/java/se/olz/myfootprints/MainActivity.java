@@ -36,20 +36,13 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         locationProvider = new LocationProvider(this, this, this);
-        db = new DBHelper(this);
-        displayError(ROWS);
-    }
-
-    private void appendLatestEntry() {
-        TextView textView = (TextView) findViewById(R.id.textViewEntries);
-        ArrayList<RawPositions> allRows = db.getAllEntries();
-        textView.append(allRows.get(allRows.size()-1).toString() + "\n");
+        db = new DBHelper(this, User.getEmail());
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         locationProvider.disconnect();
+        super.onDestroy();
     }
 
     @Override
@@ -80,13 +73,23 @@ public class MainActivity extends AppCompatActivity implements
         startActivity(intent);
     }
 
+    public void logout(View view) {
+        DBUsers users = new DBUsers(this);
+        users.logout();
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
     public void toggleTracking(View view) {
         if (trackingStarted) {
             locationProvider.disconnect();
             toggleTrackingText();
             trackingStarted = false;
-        }
-        else {
+            if (db.getLastId() > User.getServerLastId()) {
+                WebHandler web = new WebHandler(this);
+                web.push();
+            }
+        } else {
             date = new Date();
             sessionid = date.getTime()/1000;
             locationProvider.connect();
@@ -100,9 +103,6 @@ public class MainActivity extends AppCompatActivity implements
 
     public void clearDatabase(View view) {
         db.clean();
-        displayError(ROWS);
-        TextView textView = (TextView) findViewById(R.id.textViewEntries);
-        textView.setText("Entries:\n");
     }
 
     private void toggleTrackingText() {
@@ -122,13 +122,9 @@ public class MainActivity extends AppCompatActivity implements
         if (location != null) {
             double currentLatitude = location.getLatitude();
             double currentLongitude = location.getLongitude();
-            LatLng myPosition = new LatLng(currentLatitude, currentLongitude);
-
             date = new Date();
             long timestamp = date.getTime()/1000;
-            db.insertCoordinates(sessionid, timestamp, currentLatitude, currentLongitude);
-            appendLatestEntry();
-            displayError(ROWS);
+            db.insertOne(new RawPositions(-1, sessionid, timestamp, currentLatitude, currentLongitude));
         }
     }
 
@@ -146,15 +142,6 @@ public class MainActivity extends AppCompatActivity implements
                 textView.setText(error);
                 break;
             }
-            case ROWS: {
-                Integer interror = db.numberOfRows();
-                Log.i(TAG, "Nr of rows in database: " + interror.toString());
-                String error = "Nr of rows in database: " + interror.toString();
-                textView.setText(error);
-                break;
-            }
-
         }
-
     }
 }
