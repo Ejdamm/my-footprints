@@ -109,7 +109,7 @@ public class ZoomPosContainer {
             case 9:
                 rounded = (long) (d * 1e3) / 1e3;
                 break;
-            case 11:
+            case 12:
                 rounded = (long) (d * 1e4) / 1e4;
                 break;
             case 16:

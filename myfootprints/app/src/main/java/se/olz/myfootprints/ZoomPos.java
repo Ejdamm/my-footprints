@@ -17,18 +17,18 @@ public class ZoomPos {
         this.occurance = 1;
     }
 
-    protected boolean equals(ZoomPos other) {
+    public boolean equals(ZoomPos other) {
         return other.latitude == this.latitude && other.longitude == this.longitude;
     }
 
-    protected boolean biggerThan(ZoomPos other) {
+    public boolean biggerThan(ZoomPos other) {
         if (this.latitude == other.latitude) {
             return this.longitude > other.longitude;
         }
         return this.latitude > other.latitude;
     }
 
-    protected boolean lessThan(ZoomPos other) {
+    public boolean lessThan(ZoomPos other) {
         if (this.latitude == other.latitude) {
             return this.longitude < other.longitude;
         }

@@ -43,9 +43,7 @@ public class MapsActivity extends FragmentActivity implements
     public void onMapReady(GoogleMap map) {
         mMap = map;
         mMap.setOnCameraIdleListener(this);
-
         update();
-
         if (lastPosition != null) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastPosition, zoomLevel));
         }
@@ -58,15 +56,14 @@ public class MapsActivity extends FragmentActivity implements
         Log.d(TAG, valueOf(rawZoomLevel));
         if (rawZoomLevel >= 16)
             zoomLevel = 16;
-        else if (rawZoomLevel >= 11)
-            zoomLevel = 11;
+        else if (rawZoomLevel >= 12)
+            zoomLevel = 12;
         else if (rawZoomLevel >= 9)
             zoomLevel = 9;
         else
             zoomLevel = 8;
         if (prevZoomLevel != zoomLevel) {
             mMap.clear();
-
             update();
         }
 
@@ -80,7 +77,6 @@ public class MapsActivity extends FragmentActivity implements
             position = new LatLng(toMark.get(i).getLatitude(), toMark.get(i).getLongitude());
             MarkerOptions options = new MarkerOptions()
                     .anchor(0.5f, 0.5f)
-                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_red_marker))
                     .position(position);
 
             if (toMark.zoomedPositions.get(i).getOccurance() > 50) {

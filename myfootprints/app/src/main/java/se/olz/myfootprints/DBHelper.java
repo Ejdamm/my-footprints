@@ -14,7 +14,8 @@ import static java.lang.String.valueOf;
 
 public class DBHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
+    private static final String DATABASE_NAME= "my_footprints.db";
     private static String TABLE_NAME;
     private static final String COLUMN_NAME_ID = "id";
     private static final String COLUMN_NAME_SESSION = "session";
@@ -24,19 +25,19 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TAG = DBHelper.class.getSimpleName();
 
     public DBHelper(Context context, String email) {
-        super(context, email+".db", null, DATABASE_VERSION);
-        TABLE_NAME = "`"+email+"`";
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        TABLE_NAME = "`" + email + "`";
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (" +
+        String sql = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " +
                 COLUMN_NAME_SESSION + " INTEGER, " +
                 COLUMN_NAME_TIMESTAMP + " INTEGER, " +
                 COLUMN_NAME_LATITUDE + " DOUBLE, " +
                 COLUMN_NAME_LONGITUDE +  " DOUBLE)";
-        db.execSQL(SQL_CREATE_ENTRIES);
+        db.execSQL(sql);
     }
 
     @Override
@@ -93,13 +94,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_NAME, null, contentValues);
         db.close();
         return true;
-    }
-
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        int nrOf = (int)DatabaseUtils.queryNumEntries(db, TABLE_NAME);
-        db.close();
-        return nrOf;
     }
 
     public ArrayList<RawPositions> getEntries(String sql) {

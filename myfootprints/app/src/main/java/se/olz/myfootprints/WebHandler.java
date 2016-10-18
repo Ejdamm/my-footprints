@@ -53,7 +53,6 @@ public class WebHandler {
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         urlConn.setDoOutput(true);
-        //urlConn.setRequestMethod("POST");
         urlConn.setChunkedStreamingMode(length);
         return urlConn;
     }
@@ -73,7 +72,7 @@ public class WebHandler {
         while ((data = in.read()) != -1) {
             sb.append((char) data);
         }
-        Log.d(TAG, "Inputstream " + sb.toString());
+        //Log.d(TAG, "Inputstream " + sb.toString());
         in.close();
         return sb.toString();
     }
@@ -242,9 +241,9 @@ public class WebHandler {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    DBHelper dbHelper = new DBHelper(context, User.getEmail());
+                    DBHelper db = new DBHelper(context, User.getEmail());
                     int lastId = User.getServerLastId();
-                    ArrayList<RawPositions> toInsert = dbHelper.getAfter(lastId);
+                    ArrayList<RawPositions> toInsert = db.getAfter(lastId);
                     JSONObject jsonData = new JSONObject();
                     for (int i = 0; i < toInsert.size(); i++) {
                         JSONObject jsonRow = new JSONObject();
@@ -263,7 +262,7 @@ public class WebHandler {
                     String resultString = recieve(urlConn);
 
                     final JSONObject jsonRows = new JSONObject(resultString);
-                    if (jsonRows.getInt("success") == 0);
+                    if (jsonRows.getInt("success") == 0)
                         User.setServerLastId(jsonRows.getInt("lastid"));
 
                 } catch (IOException e) {
